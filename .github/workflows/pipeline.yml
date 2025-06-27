@@ -1,0 +1,188 @@
+name: Deploy custom web
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Choose environment
+        required: true
+        default: development
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+env:
+  NODE_ENV: ${{ inputs.environment || 'development' }}
+  PROJECT_ID: shortlet-app-project
+  REGION: ${{ secrets.KUBERNETES_REGION }}
+  KUBERNETES_SECRET: ${{ secrets.KUBERNETES_SECRET }}
+  SERVICE_ACCOUNT_KEY: ${{ secrets.SERVICE_ACCOUNT_KEY }}
+  GKE_CLUSTER_NAME: shortlet-app-gke-cluster
+  # DOCKER ENVs
+  DOCKER_REGISTRY_URL: europe-west3-docker.pkg.dev
+  DOCKER_REGISTRY_USERNAME: _json_key_base64
+  DOCKER_REGISTRY_PASSWORD: ${{ secrets.KUBERNETES_SECRET }}
+  DOCKER_IMAGE_URL: europe-west3-docker.pkg.dev/shortlet-app-project/shortlet-app/customer-web
+  DOCKER_IMAGE_TAG: ${{ github.sha }}
+
+jobs:
+  unit-tests:
+    name: Unit Test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./
+    strategy:
+      matrix:
+        node-version: [20.x]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install -g pnpm
+      - run: NODE_ENV=development pnpm install
+      - run: pnpm run lint
+      # - run: NODE_ENV=development pnpm test
+
+  build:
+    name: Build
+    if: >-
+      contains('dev|staging|main|development', github.ref_name) ||
+      github.event_name == 'pull_request'
+    needs: unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      # - name: Create env file
+      - name: Create .env file from GitHub Secrets
+        run: |
+          echo "VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }}" >> .env
+          echo "VITE_GOOGLE_MAP_API_KEY=${{ secrets.VITE_GOOGLE_MAP_API_KEY}}" >> .env
+          echo "VITE_SOCKET_URL=${{ secrets.VITE_SOCKET_URL}}" >> .env
+          echo "VITE_AES_KEY_BASE64=${{ secrets.VITE_AES_KEY_BASE64}}" >> .env
+          echo "VITE_UI_BASE_URL=${{ secrets.VITE_UI_BASE_URL}}" >> .env
+          echo "VITE_GOOGLE_OAUTH_CLIENT_ID=${{ secrets.VITE_GOOGLE_OAUTH_CLIENT_ID}}" >> .env
+          echo "VITE_EXPLORE_HOME_LISTINGS_LIMIT=${{ secrets.VITE_EXPLORE_HOME_LISTINGS_LIMIT}}" >> .env
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+      - name: Login to private registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.DOCKER_REGISTRY_URL }}
+          username: ${{ env.DOCKER_REGISTRY_USERNAME }}
+          password: ${{ env.DOCKER_REGISTRY_PASSWORD }}
+      - name: Build and push
+        uses: docker/build-push-action@v3
+        with:
+          context: ./
+          file: ./Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          push: true # ${{ github.event_name == 'push' }}
+          tags: |
+            ${{ env.DOCKER_IMAGE_URL }}:latest
+            ${{ env.DOCKER_IMAGE_URL }}:${{ env.DOCKER_IMAGE_TAG }}
+          cache-from: type=registry,ref=${{ env.DOCKER_IMAGE_URL }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_IMAGE_URL }}:buildcache,mode=max,ignore-error=true
+
+  deploy-development:
+    name: 01 - Deploy development
+    if: >-
+      (github.event_name == 'push' && github.ref_name == 'development') ||
+      (inputs.environment == 'development')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v1
+        with:
+          credentials_json: ${{ env.KUBERNETES_SECRET }}
+      - name: Get GKE Credentials
+        uses: google-github-actions/get-gke-credentials@v1
+        with:
+          cluster_name: ${{ env.GKE_CLUSTER_NAME }}
+          location: ${{ env.REGION }}
+      - name: Install Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: v3.8.0
+      - name: Deploy on the GKE
+        run: |-
+          sed -i -e 's/latest/'${{ env.DOCKER_IMAGE_TAG }}'/' ./infra/k8s/deployment/development.yml
+          kubectl apply -f ./infra/k8s/deployment/development.yml
+          kubectl apply -f ./infra/k8s/deployment/es-gsm-development.yml 
+
+  # deploy-staging:
+  #   name: 02 - Deploy staging
+  #   if: >-
+  #     (github.event_name == 'push' && github.ref_name == 'staging') ||
+  #     (inputs.environment == 'staging')
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: 'read'
+  #     id-token: 'write'
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #     - name: Authenticate to Google Cloud
+  #       uses: google-github-actions/auth@v1
+  #       with:
+  #         credentials_json: ${{ env.KUBERNETES_SECRET }}
+  #     - name: Get GKE Credentials
+  #       uses: google-github-actions/get-gke-credentials@v1
+  #       with:
+  #         cluster_name: ${{ env.GKE_CLUSTER_NAME }}
+  #         location: ${{ env.REGION }}
+  #     - name: Install Helm
+  #       uses: azure/setup-helm@v3
+  #       with:
+  #         version: v3.8.0
+  #     - name: Deploy with Helm
+  #       run: |
+  #         helm upgrade --install shortlet-backoffice-staging-v2 ./src/helm \
+  #           --namespace staging \
+  #           --values ./src/helm/values.staging.yaml \
+  #           --set image.tag=${{ env.DOCKER_IMAGE_TAG }}
+
+  # deploy-prod:
+  #   name: 03 - Deploy production
+  #   if: ${{ inputs.environment == 'production' }}
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   permissions:
+  #     contents: 'read'
+  #     id-token: 'write'
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v3
+  #     - name: Authenticate to Google Cloud
+  #       uses: google-github-actions/auth@v1
+  #       with:
+  #         credentials_json: ${{ env.KUBERNETES_SECRET }}
+  #     - name: Get GKE Credentials
+  #       uses: google-github-actions/get-gke-credentials@v1
+  #       with:
+  #         cluster_name: ${{ env.GKE_CLUSTER_NAME }}
+  #         location: ${{ env.REGION }}
+  #     - name: Install Helm
+  #       uses: azure/setup-helm@v3
+  #       with:
+  #         version: v3.8.0
+  #     - name: Deploy with Helm
+  #       run: |
+  #         helm upgrade --install shortlet-backoffice-production-v2 ./src/helm \
+  #           -- namespace prod \
+  #           --values ./src/helm/values.prod.yaml \
+  #           --set image.tag=${{ env.DOCKER_IMAGE_TAG }}
