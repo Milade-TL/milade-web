@@ -4,6 +4,41 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  --color-milade-shade: var(--milade-shade);
+  --color-milade-shade-10: var(--milade-shade-10);
+  --color-milade-shade-20: var(--milade-shade-20);
+  --color-milade-shade-30: var(--milade-shade-30);
+  --color-milade-shade-40: var(--milade-shade-40);
+  --color-milade-shade-50: var(--milade-shade-50);
+  --color-milade-shade-60: var(--milade-shade-60);
+  --color-milade-shade-70: var(--milade-shade-70);
+  --color-milade-shade-80: var(--milade-shade-80);
+  --color-milade-shade-90: var(--milade-shade-90);
+  --color-milade-shade-100: var(--milade-shade-100);
+
+  --color-milade-tint: var(--milade-tint);
+  --color-milade-tint-10: var(--milade-tint-10);
+  --color-milade-tint-20: var(--milade-tint-20);
+  --color-milade-tint-30: var(--milade-tint-30);
+  --color-milade-tint-40: var(--milade-tint-40);
+  --color-milade-tint-50: var(--milade-tint-50);
+  --color-milade-tint-60: var(--milade-tint-60);
+  --color-milade-tint-70: var(--milade-tint-70);
+  --color-milade-tint-80: var(--milade-tint-80);
+  --color-milade-tint-90: var(--milade-tint-90);
+  --color-milade-tint-100: var(--milade-tint-100);
+
+  --color-milade-error: var(--milade-error);
+  --color-milade-error-2: var(--milade-error-2);
+  --color-milade-warning: var(--milade-warning);
+  --color-milade-accent: var(--milade-accent);
+
+  --color-milade-neutral: var(--milade-neutral);
+  --color-milade-neutral-2: var(--milade-neutral-2);
+  --color-milade-neutral-3: var(--milade-neutral-3);
+  --color-milade-neutral-4: var(--milade-neutral-4);
+  --color-milade-neutral-5: var(--milade-neutral-5);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-candara: var(--font-candara);
@@ -103,6 +138,7 @@
   --border: oklch(0.922 0 0);
   --input: oklch(0.922 0 0);
   --ring: oklch(0.708 0 0);
+  /* --ring: oklch(0.7529 0.1496 165.03); */
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
@@ -158,5 +194,11 @@
   }
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer components {
+  .milade-container {
+    @apply max-w-7xl w-full  px-4 sm:px-6 lg:px-8;
   }
 }
