@@ -1,7 +1,7 @@
 import { HeroSection } from "@/components/home/hero-section";
 import NewsletterSection from "@/components/home/newsletter-section";
 import { ReviewsSection } from "@/components/home/reviews-section";
-import { ServicesSection } from "@/components/home/services-section";
+import { ServicesMarqueeSection } from "@/components/home/services-marquee-section";
 import { WhyChooseSection } from "@/components/home/why-choose-section";
 
 export default function Home() {
@@ -9,7 +9,8 @@ export default function Home() {
     <div>
       <main>
         <HeroSection />
-        <ServicesSection />
+        <ServicesMarqueeSection />
+        {/* <ServicesSection /> */}
         <WhyChooseSection />
         <ReviewsSection />
         <NewsletterSection />
