@@ -19,7 +19,7 @@ const reviews = [
     service: "Abuja to Lagos Ride",
     rating: 5,
     review:
-      "Milade made my interstate trip so smooth. The booking process was quick, and the ride was super comfortable. I arrived safely and on time!",
+      "MiladeTL made my interstate trip so smooth. The booking process was quick, and the ride was super comfortable. I arrived safely and on time!",
     avatar: "/images/milade_man_with_arms_crossed.png",
     bgColor: "bg-red-500",
   },

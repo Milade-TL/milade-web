@@ -12,7 +12,7 @@ const services = [
       "When traveling together matters, rent a bus with ease and enjoy your trip in comfort.",
     image: "/images/milade_white_buses.png",
     href: "/bus-rental",
-    alt: "Milade white buses parked in a garage",
+    alt: "MiladeTL white buses parked in a garage",
   },
   {
     id: 2,
@@ -21,7 +21,7 @@ const services = [
       "From city runs to road trips? We've got the perfect car. Rent a ride that fits your lifestyle.",
     image: "/images/milade_car_with_google_map_navigation.png",
     href: "/car-rental",
-    alt: "A Milade car with Google map navigation on the dashboard",
+    alt: "A MiladeTL car with Google map navigation on the dashboard",
   },
   {
     id: 3,

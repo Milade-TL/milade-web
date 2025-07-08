@@ -60,7 +60,7 @@ export function FAQSection() {
 
   return (
     <section className='font-candara flex flex-col items-center justify-center'>
-      <div className='milade-container py-10 md:pb-16 md:pt-52'>
+      <div className='milade-container pt-20 pb-10 md:pb-16 md:pt-52'>
         {/* Header Section */}
         <div className='text-center mb-8'>
           <h1 className='text-4xl font-bold text-milade-shade-90 mb-6'>
