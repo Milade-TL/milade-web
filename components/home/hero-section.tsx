@@ -6,7 +6,7 @@ export function HeroSection() {
     <section className='flex flex-col items-center justify-center  text-white font-candara  relative min-h-[100svh]'>
       <div className='absolute inset-0 bg-[radial-gradient(ellipse_at_top,white_0%,var(--milade-tint-20)_50%,white_100%)] blur-2xl '></div>
 
-      <div className='milade-container relative pt-4 lg:pt-[200px] sm:pb-10'>
+      <div className='milade-container relative pt-8 lg:pt-[200px] sm:pb-10'>
         <div className='w-full relative h-[580px] rounded-2xl overflow-x-clip md:overflow-clip px-4 isolate'>
           <Image
             src='/images/milade_map_icon.png'
@@ -36,7 +36,7 @@ export function HeroSection() {
               </h1>
               <p className='md:mt-6 mt-3  sm:text-2xl max-w-[40ch]'>
                 Want to move safely from one place to another without stress?
-                Milade is what you need.
+                MiladeTL is what you need.
               </p>
             </div>
             <div className='hidden md:block relative'>

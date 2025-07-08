@@ -7,7 +7,7 @@ export function ContactHeroSection() {
       <div className='w-full h-full relative flex justify-center items-center'>
         <Image
           src='/images/milade_travellers.png'
-          alt='A group of Milade travellers'
+          alt='A group of MiladeTL travellers'
           fill={true}
           className='object-cover'
         />

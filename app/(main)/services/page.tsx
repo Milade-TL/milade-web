@@ -3,6 +3,12 @@ import { WhyChooseSection } from "@/components/home/why-choose-section";
 import { ServicesCarouselSection } from "@/components/services/carousel-section";
 import { ServiceHeroSection } from "@/components/services/hero-section";
 import { NeedHelpSection } from "@/components/services/need-help-section";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Services",
+  description: `Services offered by MiladeTL`,
+};
 
 export default function ServicePage() {
   return (

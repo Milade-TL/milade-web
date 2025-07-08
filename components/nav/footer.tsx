@@ -47,9 +47,9 @@ export function Footer() {
                     <MiladeLogo />
                   </Link>
                 </div>
-                <span className='text-2xl font-bold'>Milade</span>
+                <span className='text-2xl font-bold'>MiladeTL</span>
               </div>
-              <p className='text-green-100'>©2024 MiladeTI Tech.</p>
+              <p className='text-green-100'>©2024 MiladeTL Tech.</p>
             </div>
 
             {/* Social Media Icons */}
@@ -144,11 +144,11 @@ export function Footer() {
                 <MiladeLogo />
               </div>
               <div className='text-left'>
-                <div className='text-xl font-bold'>MILADE TAXICAB</div>
+                <div className='text-xl font-bold'>MILADETL TAXICAB</div>
                 <div className='text-xl font-bold'>& LOGISTICS</div>
               </div>
             </div>
-            <p className='text-green-100'>©2024 MiladeTI Tech.</p>
+            <p className='text-green-100'>©2024 MiladeTL Tech.</p>
           </div>
 
           {/* Links Grid */}

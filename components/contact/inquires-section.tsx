@@ -10,8 +10,8 @@ export function InquiriesSection() {
     <section className='min-h-screen w-full flex justify-center items-center flex-col relative  font-candara'>
       <div className='pt-10 pb-[100px] mb-[314px] md:mb-0 milade-container md:py-16 relative z-10'>
         <p className='text-center sm:text-2xl font-bold mx-auto max-w-[594px] mb-40 sm:mb-14'>
-          Thank you for choosing Milade TL as your trusted transport partner.
-          Our dedicated support team is always here to ensure your journey is
+          Thank you for choosing MiladeTL as your trusted transport partner. Our
+          dedicated support team is always here to ensure your journey is
           smooth, safe, and stress-free — every step of the way.
         </p>
 
