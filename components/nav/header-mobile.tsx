@@ -21,7 +21,7 @@ const mockUser = {
 };
 
 const navigationLinks = [
-  { href: "/booking", label: "Booking" },
+  { href: "/bookings", label: "Booking" },
   { href: "/services", label: "Services" },
   { href: "/about", label: "About Us" },
   { href: "/contact", label: "Contact Us" },
